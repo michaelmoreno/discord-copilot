@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import OpenAI from 'openai-api';
 import {Client, Intents } from 'discord.js'
+import { classifyPrompt } from './prompts';
 
 const token = process.env.TOKEN
 const api_key = process.env.OPENAI_API_KEY
@@ -60,16 +61,41 @@ Q: ${message}
     return prompt
 }
 
+client.user?.setActivity("Ping me with questions!", {
+    type: "PLAYING",
+})
+// client.user?.setStatus('online');
+
+
 
 client.on('messageCreate', message => {
     if (message.author.bot) return;
     if (message.mentions.has(client.user!)) {
-        const prompt = interpolate(message.content);
+        // const prompt = interpolate(message.content);
+        const prompt = classifyPrompt(`${message.content}`);
         message.channel.sendTyping();
-        console.log('Getting response for:', message.content);
+        // console.log('Getting response for:', message.content);
+        // (async () => {
+        //     const gptResponse = await openai.complete({
+        //         engine: 'code-davinci-002',
+        //         prompt: prompt,
+        //         maxTokens: 3000,
+        //         temperature: 0.3,
+        //         topP: 0.3,
+        //         presencePenalty: 0,
+        //         frequencyPenalty: 0.5,
+        //         bestOf: 1,
+        //         n: 1,
+        //         stream: false,
+        //         stop: ['Q:']
+        //     });
+
+        //     message.reply(`${gptResponse.data.choices[0].text.substring(4)}`);
+        //     console.log(JSON.stringify(gptResponse.data, null, 2));
+        // })();
         (async () => {
             const gptResponse = await openai.complete({
-                engine: 'code-davinci-002',
+                engine: 'text-davinci-002',
                 prompt: prompt,
                 maxTokens: 3000,
                 temperature: 0.3,
@@ -82,8 +108,8 @@ client.on('messageCreate', message => {
                 stop: ['Q:']
             });
 
-            message.reply(`${gptResponse.data.choices[0].text.substring(4)}`);
-            console.log(JSON.stringify(gptResponse.data, null, 2));
+            message.reply(`${gptResponse.data.choices[0].text.substring(1)}`);
+            console.log(gptResponse.data.choices[0].text.substring(1));
         })();
     }
 })
