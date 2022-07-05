@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import OpenAI from 'openai-api';
 import {Client, Intents } from 'discord.js'
-import { classifyPrompt } from './prompts';
+import { classifyPrompt, plainEnglishPrompt, codeExamplePrompt } from './prompts';
 
 const token = process.env.TOKEN
 const api_key = process.env.OPENAI_API_KEY
@@ -17,100 +17,84 @@ client.on('ready', () => {
 })
 
 
-function interpolate(message: string): string {
-    let prompt = `
-This chatbot gives single code example answers to programming questions or plain english explanations of concepts. DO NOT ATTEMPT TO USE COMMENTS IN CODE.
-[Code Example Format]
-
-Q: for loop in python
-A: \`\`\`py
-letters = ['a', 'b', 'c', 'd']
-for i in range(len(letters)):
-    print(i, letters[i])
-\`\`\`
-Q: draw fractal tree using turtle in python
-A: \`\`\`py
-import turtle
-
-def draw_branch(t, branch_length):
-    if branch_length > 30:
-        t.forward(branch_length)
-        t.left(20)
-        draw_branch(t, branch_length * 0.85)
-        t.right(40)
-        draw_branch(t, branch_length * 0.85)
-        t.left(20)
-        t.backward(branch_length)
-
-def main():
-    t = turtle.Turtle()
-    screen = turtle.Screen()
-    t.left(90)
-    draw_branch(t, 100)
-    screen.exitonclick()
-
-main()
-\`\`\`
-
-[Plain English Explanation Format]
-
-Q: What is the Incompleteness theorem and who found it
-A: The incompleteness theorem is a theorem in mathematical logic that states that any effectively generated theory capable of expressing elementary arithmetic cannot be both consistent and complete. In other words, for any consistent, effectively generated formal theory that proves certain basic arithmetic truths, there is an arithmetical statement that is true, but not provable in the theory. The theorem was proven by Kurt Gödel in 1931.
-Q: ${message}
-`.trim()
-    return prompt
-}
 
 client.user?.setActivity("Ping me with questions!", {
     type: "PLAYING",
 })
 // client.user?.setStatus('online');
 
+async function completeClassify(prompt: string) {
+    const gptResponse = await openai.complete({
+        engine: 'text-davinci-002',
+        prompt: prompt,
+        maxTokens: 3000,
+        temperature: 0.3,
+        topP: 0.3,
+        presencePenalty: 0,
+        frequencyPenalty: 0.5,
+        bestOf: 1,
+        n: 1,
+        stream: false,
+        stop: ['Q:']
+    });
+    return gptResponse.data.choices[0].text.substring(1);
+}
+
+async function completePlainEnglish(prompt: string) {
+    const gptResponse = await openai.complete({
+        engine: 'text-davinci-002',
+        prompt: prompt,
+        maxTokens: 3000,
+        temperature: 0.3,
+        topP: 0.3,
+        presencePenalty: 0,
+        frequencyPenalty: 0.5,
+        bestOf: 1,
+        n: 1,
+        stream: false,
+        stop: ['Q:']
+    });
+    return gptResponse.data.choices[0].text.substring(1);
+}
+
+async function completeCodeExample(prompt: string) {
+    const gptResponse = await openai.complete({
+        engine: 'code-davinci-002',
+        prompt: prompt,
+        maxTokens: 3000,
+        temperature: 0.3,
+        topP: 0.3,
+        presencePenalty: 0,
+        frequencyPenalty: 0.5,
+        bestOf: 1,
+        n: 1,
+        stream: false,
+        stop: ['Q:']
+    });
+    return gptResponse.data.choices[0].text.substring(1);
+}
 
 
 client.on('messageCreate', message => {
     if (message.author.bot) return;
     if (message.mentions.has(client.user!)) {
-        // const prompt = interpolate(message.content);
-        const prompt = classifyPrompt(`${message.content}`);
         message.channel.sendTyping();
-        // console.log('Getting response for:', message.content);
-        // (async () => {
-        //     const gptResponse = await openai.complete({
-        //         engine: 'code-davinci-002',
-        //         prompt: prompt,
-        //         maxTokens: 3000,
-        //         temperature: 0.3,
-        //         topP: 0.3,
-        //         presencePenalty: 0,
-        //         frequencyPenalty: 0.5,
-        //         bestOf: 1,
-        //         n: 1,
-        //         stream: false,
-        //         stop: ['Q:']
-        //     });
-
-        //     message.reply(`${gptResponse.data.choices[0].text.substring(4)}`);
-        //     console.log(JSON.stringify(gptResponse.data, null, 2));
-        // })();
-        (async () => {
-            const gptResponse = await openai.complete({
-                engine: 'text-davinci-002',
-                prompt: prompt,
-                maxTokens: 3000,
-                temperature: 0.3,
-                topP: 0.3,
-                presencePenalty: 0,
-                frequencyPenalty: 0.5,
-                bestOf: 1,
-                n: 1,
-                stream: false,
-                stop: ['Q:']
-            });
-
-            message.reply(`${gptResponse.data.choices[0].text.substring(1)}`);
-            console.log(gptResponse.data.choices[0].text.substring(1));
-        })();
+        let prompt = classifyPrompt(`${message.content}`);
+        (completeClassify)(prompt).then(classification => {
+            console.log('classification: ', classification);
+            if (classification == 'Plain English') {
+                prompt = plainEnglishPrompt(`${message.content}`);
+                (completePlainEnglish)(prompt).then(response => {
+                    message.reply(response);
+                })
+            } else if (classification == 'Code Example') {
+                prompt = codeExamplePrompt(`${message.content}`);
+                console.log(prompt);
+                (completeCodeExample)(prompt).then(response => {
+                    message.reply(response);
+                })
+            }
+        });
     }
 })
 
