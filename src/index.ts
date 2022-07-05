@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import OpenAI from 'openai-api';
 import {Client, Intents } from 'discord.js'
-import { classifyPrompt, plainEnglishPrompt, codeExamplePrompt } from './prompts';
+import { classifyPrompt, plainEnglishPrompt, codeExamplePrompt, bothPrompt } from './prompts';
 
 const token = process.env.TOKEN
 const api_key = process.env.OPENAI_API_KEY
@@ -65,7 +65,24 @@ async function completeCodeExample(prompt: string) {
         temperature: 0.3,
         topP: 0.3,
         presencePenalty: 0,
-        frequencyPenalty: 0.5,
+        frequencyPenalty: 0.3,
+        bestOf: 1,
+        n: 1,
+        stream: false,
+        stop: ['Q:']
+    });
+    return gptResponse.data.choices[0].text.substring(1);
+}
+
+async function completeBoth(prompt: string) {
+    const gptResponse = await openai.complete({
+        engine: 'code-davinci-002',
+        prompt: prompt,
+        maxTokens: 5000,
+        temperature: 0.3,
+        topP: 0.3,
+        presencePenalty: 0,
+        frequencyPenalty: 0,
         bestOf: 1,
         n: 1,
         stream: false,
@@ -91,6 +108,11 @@ client.on('messageCreate', message => {
                 prompt = codeExamplePrompt(`${message.content}`);
                 console.log(prompt);
                 (completeCodeExample)(prompt).then(response => {
+                    message.reply(response);
+                })
+            } else if (classification == 'Both') {
+                prompt = bothPrompt(`${message.content}`);
+                (completeBoth)(prompt).then(response => {
                     message.reply(response);
                 })
             }
