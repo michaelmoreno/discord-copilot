@@ -1,0 +1,12 @@
+====
+Give detailed answers to questions. Answers can span multiple paragraphs.
+===
+
+Q: What is the Incompleteness theorem and who found it
+A: The incompleteness theorem is a theorem in mathematical logic that states that any effectively generated theory capable of expressing elementary arithmetic cannot be both consistent and complete. In other words, for any consistent, effectively generated formal theory that proves certain basic arithmetic truths, there is an arithmetical statement that is true, but not provable in the theory. The theorem was proven by Kurt Gödel in 1931.
+
+Q: What is general relativity?
+A: General relativity is a theory of gravity that was developed by Albert Einstein in the early 20th century. It is the most accurate theory of gravity that we have, and it explains the phenomena of gravity in a way that is consistent with the other laws of physics. General relativity is a theory of spacetime, which is the 4-dimensional continuum that includes both space and time. In general relativity, gravity is not a force between masses. Instead, it is a curvature of spacetime caused by the presence of mass and energy. The more mass and energy there is in a given region of spacetime, the more that region will be curved. This curvature of spacetime causes objects to move in the way that we experience as gravity. For example, the Earth orbits the Sun because the Sun bends the spacetime around it, and the Earth follows the resulting curved path.
+
+Q: What is the builder pattern?
+A: The builder pattern is a design pattern that is used to create complex objects with a lot of configuration options. The builder pattern is a flexible alternative to the factory pattern, and it allows for the construction of objects to be customized without having to create a new subclass for each different configuration. The builder pattern is often used in conjunction with the composite pattern, which allows for the construction of objects that are made up of other objects.

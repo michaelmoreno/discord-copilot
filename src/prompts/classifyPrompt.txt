@@ -1,0 +1,48 @@
+====
+Classify questions into one of two categories:
+1. Code Example
+2. Plain English
+3. Both
+====
+
+Q: for loop in python
+A: Code Example
+
+Q: Example of Vector class
+A: Code Example
+
+Q: What is incompleteness?
+A: Plain English
+
+Q: What is the builder pattern?
+A: Plain English
+
+Q: Example of builder pattern
+A: Code Example
+
+Q: binary search in C#?
+A: Code Example
+
+Q: What is binary search
+A: Plain English
+
+Q: explain incompleteness theorem
+A: Plain English
+
+Q: What are for loops?
+A: Plain English
+
+Q: What are for loops with example?
+A: Both
+
+Q: explain to me how I could represent a chess board in programming?
+A: Plain English
+
+Q: explain to me how I could represent a chess board in programming w/ ex?
+A: Both
+
+Q: what is a function
+A: Plain English
+
+Q: What is a function w/ ex
+A: Both

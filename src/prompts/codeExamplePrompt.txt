@@ -1,0 +1,37 @@
+====
+Give code examples to questions using markdown. Avoid using comments in code.
+====
+
+Q: for loop in python
+A: ```py
+letters = [ 'a', 'b', 'c',]
+for letter in letters:
+    print(letter)
+```
+
+Q:fractal tree in python using turtle
+A: ```py
+import turtle
+
+def draw_branch(t, branch_length):
+    if branch_length > 5:
+        t.forward(branch_length)
+        t.right(20)
+        draw_branch(t, branch_length-15)
+        t.left(40)
+        draw_branch(t, branch_length-15)
+        t.right(20)
+        t.backward(branch_length)
+
+def main():
+    window = turtle.Screen()
+    window.bgcolor('white')
+    t = turtle.Turtle()
+    t.left(90)
+    t.color('green')
+    t.speed(0)
+    draw_branch(t, 100)
+    window.exitonclick()
+
+main()
+```

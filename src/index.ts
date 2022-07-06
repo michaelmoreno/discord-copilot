@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import OpenAI from 'openai-api';
 import {Client, Intents } from 'discord.js'
-import { classifyPrompt, plainEnglishPrompt, codeExamplePrompt, bothPrompt } from './prompts';
+import { readFileSync } from 'fs';
+import path from 'path';
+
 
 const token = process.env.TOKEN
 const api_key = process.env.OPENAI_API_KEY
@@ -91,31 +93,36 @@ async function completeBoth(prompt: string) {
     return gptResponse.data.choices[0].text.substring(1);
 }
 
+ function addQuestion(promptFile: string, question: string): string {
+    let prompt = readFileSync(path.resolve(__dirname, promptFile), 'utf8');
+    const newPrompt = prompt + question + '\nA:';
+    return newPrompt;
+ }
 
 client.on('messageCreate', message => {
     if (message.author.bot) return;
     if (message.mentions.has(client.user!)) {
         message.channel.sendTyping();
-        let prompt = classifyPrompt(`${message.content}`);
+        let prompt = addQuestion('./prompts/classifyPrompt.txt', message.content);
         (completeClassify)(prompt).then(classification => {
             console.log('classification: ', classification);
 
             switch (classification) {
                 case 'Plain English':
-                    prompt = plainEnglishPrompt(`${message.content}`);
+                    prompt = addQuestion('./prompts/plainEnglishPrompt.txt', message.content);
                     (completePlainEnglish)(prompt).then(response => {
                         message.reply(response);
                     })
                     break;
                 case 'Code Example':
-                    prompt = codeExamplePrompt(`${message.content}`);
+                    prompt = addQuestion('./prompts/codeExamplePrompt.txt', message.content);
                     console.log(prompt);
                     (completeCodeExample)(prompt).then(response => {
                         message.reply(response);
                     })
                     break;
                 case 'Both':
-                    prompt = bothPrompt(`${message.content}`);
+                    prompt = addQuestion('./prompts/bothPrompt.txt', message.content);
                     (completeBoth)(prompt).then(response => {
                         message.reply(response);
                     })
