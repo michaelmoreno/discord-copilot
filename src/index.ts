@@ -99,23 +99,28 @@ client.on('messageCreate', message => {
         let prompt = classifyPrompt(`${message.content}`);
         (completeClassify)(prompt).then(classification => {
             console.log('classification: ', classification);
-            if (classification == 'Plain English') {
-                prompt = plainEnglishPrompt(`${message.content}`);
-                (completePlainEnglish)(prompt).then(response => {
-                    message.reply(response);
-                })
-            } else if (classification == 'Code Example') {
-                prompt = codeExamplePrompt(`${message.content}`);
-                console.log(prompt);
-                (completeCodeExample)(prompt).then(response => {
-                    message.reply(response);
-                })
-            } else if (classification == 'Both') {
-                prompt = bothPrompt(`${message.content}`);
-                (completeBoth)(prompt).then(response => {
-                    message.reply(response);
-                })
-            }
+
+            switch (classification) {
+                case 'Plain English':
+                    prompt = plainEnglishPrompt(`${message.content}`);
+                    (completePlainEnglish)(prompt).then(response => {
+                        message.reply(response);
+                    })
+                    break;
+                case 'Code Example':
+                    prompt = codeExamplePrompt(`${message.content}`);
+                    console.log(prompt);
+                    (completeCodeExample)(prompt).then(response => {
+                        message.reply(response);
+                    })
+                    break;
+                case 'Both':
+                    prompt = bothPrompt(`${message.content}`);
+                    (completeBoth)(prompt).then(response => {
+                        message.reply(response);
+                    })
+                    break;
+                }
         });
     }
 })
