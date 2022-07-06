@@ -38,6 +38,9 @@ Q: What are for loops with example?
 A: Both
 
 Q: explain to me how I could represent a chess board in programming?
+A: Plain English
+
+Q: explain to me how I could represent a chess board in programming w/ ex?
 A: Both
 
 Q: what is a function
@@ -215,6 +218,37 @@ for letter in letters:
     print(letter)
 \`\`\`
 This will print the letters 'a', 'b', and 'c'.
+
+Q: What is dependency injection w/ example?
+A: Dependency injection is a design pattern that allows you to inject dependencies into a class.
+\`\`\`py
+class Car:
+    def __init__(self, engine):
+        self.engine = engine
+
+class Engine:
+    def __init__(self):
+        self.cylinders = 4
+
+engine = Engine()
+car = Car(engine)
+\`\`\`
+In this example, the \`Car\` class has a dependency on the \`Engine\` class. The \`Engine\` class is injected into the \`Car\` class through the \`__init__\` method.
+
+Q: How do Inversify containers work?
+A: Inversify is a dependency injection container for TypeScript and JavaScript.
+\`\`\`ts
+import { Container } from "inversify";
+import { Car } from "./car";
+import { Engine } from "./engine";
+
+const container = new Container();
+container.bind<Engine>("Engine").to(Engine);
+container.bind<Car>("Car").to(Car);
+
+const car = container.get<Car>("Car");
+\`\`\`
+In this example, the \`Container\` class is used to create the \`Engine\` and \`Car\` objects and inject the \`Engine\` object into the \`Car\` object.
 
 Q: ${message}
 A:`.trim()
