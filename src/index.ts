@@ -1,137 +1,17 @@
 import 'dotenv/config';
-import OpenAI from 'openai-api';
-import {Client, Intents } from 'discord.js'
-import { readFileSync } from 'fs';
 import path from 'path';
+import { PromptHandler } from './PromptHandler';
+import { Bot } from './Bot';
 
+const token = process.env.TOKEN as string;
+const api_key = process.env.OPENAI_API_KEY as string;
 
-const token = process.env.TOKEN
-const api_key = process.env.OPENAI_API_KEY
+const promptHandler = new PromptHandler(api_key, [
+    'classifyPrompt.txt',
+    'plainEnglishPrompt.txt',
+    'codeExamplePrompt.txt',
+    'bothPrompt.txt'
+].map(prompt => path.join(__dirname, 'prompts/' + prompt)));
 
-const openai = new OpenAI(api_key as string);
-
-const client = new Client({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]
-})
-
-client.on('ready', () => {
-    console.log('Ready!')
-})
-
-
-
-client.user?.setActivity("Ping me with questions!", {
-    type: "PLAYING",
-})
-// client.user?.setStatus('online');
-
-async function completeClassify(prompt: string) {
-    const gptResponse = await openai.complete({
-        engine: 'text-davinci-002',
-        prompt: prompt,
-        maxTokens: 3000,
-        temperature: 0.3,
-        topP: 0.3,
-        presencePenalty: 0,
-        frequencyPenalty: 0.5,
-        bestOf: 1,
-        n: 1,
-        stream: false,
-        stop: ['Q:']
-    });
-    return gptResponse.data.choices[0].text.substring(1);
-}
-
-async function completePlainEnglish(prompt: string) {
-    const gptResponse = await openai.complete({
-        engine: 'text-davinci-002',
-        prompt: prompt,
-        maxTokens: 3000,
-        temperature: 0.3,
-        topP: 0.3,
-        presencePenalty: 0,
-        frequencyPenalty: 0.5,
-        bestOf: 1,
-        n: 1,
-        stream: false,
-        stop: ['Q:']
-    });
-    return gptResponse.data.choices[0].text.substring(1);
-}
-
-async function completeCodeExample(prompt: string) {
-    const gptResponse = await openai.complete({
-        engine: 'code-davinci-002',
-        prompt: prompt,
-        maxTokens: 3000,
-        temperature: 0.3,
-        topP: 0.3,
-        presencePenalty: 0,
-        frequencyPenalty: 0.3,
-        bestOf: 1,
-        n: 1,
-        stream: false,
-        stop: ['Q:']
-    });
-    return gptResponse.data.choices[0].text.substring(1);
-}
-
-async function completeBoth(prompt: string) {
-    const gptResponse = await openai.complete({
-        engine: 'code-davinci-002',
-        prompt: prompt,
-        maxTokens: 5000,
-        temperature: 0.3,
-        topP: 0.3,
-        presencePenalty: 0,
-        frequencyPenalty: 0,
-        bestOf: 1,
-        n: 1,
-        stream: false,
-        stop: ['Q:']
-    });
-    return gptResponse.data.choices[0].text.substring(1);
-}
-
- function addQuestion(promptFile: string, question: string): string {
-    let prompt = readFileSync(path.resolve(__dirname, promptFile), 'utf8');
-    const newPrompt = prompt + question + '\nA:';
-    return newPrompt;
- }
-
-client.on('messageCreate', message => {
-    if (message.author.bot) return;
-    if (message.mentions.has(client.user!)) {
-        message.channel.sendTyping();
-        let prompt = addQuestion('./prompts/classifyPrompt.txt', message.content);
-        (completeClassify)(prompt).then(classification => {
-            console.log('classification: ', classification);
-
-            switch (classification) {
-                case 'Plain English':
-                    prompt = addQuestion('./prompts/plainEnglishPrompt.txt', message.content);
-                    (completePlainEnglish)(prompt).then(response => {
-                        message.reply(response);
-                    })
-                    break;
-                case 'Code Example':
-                    prompt = addQuestion('./prompts/codeExamplePrompt.txt', message.content);
-                    console.log(prompt);
-                    (completeCodeExample)(prompt).then(response => {
-                        message.reply(response);
-                    })
-                    break;
-                case 'Both':
-                    prompt = addQuestion('./prompts/bothPrompt.txt', message.content);
-                    (completeBoth)(prompt).then(response => {
-                        message.reply(response);
-                    })
-                    break;
-                }
-        });
-    }
-})
-
-
-client.login(token)
-
+const bot = new Bot(token, promptHandler);
+bot.activate();
