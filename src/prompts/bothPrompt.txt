@@ -123,3 +123,4 @@ container.bind<Car>("Car").to(Car);
 const car = container.get<Car>("Car");
 ```
 In this example, the `Container` class is used to create the `Engine` and `Car` objects and inject the `Engine` object into the `Car` object.
+

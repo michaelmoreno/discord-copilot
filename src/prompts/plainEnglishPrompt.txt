@@ -10,3 +10,4 @@ A: General relativity is a theory of gravity that was developed by Albert Einste
 
 Q: What is the builder pattern?
 A: The builder pattern is a design pattern that is used to create complex objects with a lot of configuration options. The builder pattern is a flexible alternative to the factory pattern, and it allows for the construction of objects to be customized without having to create a new subclass for each different configuration. The builder pattern is often used in conjunction with the composite pattern, which allows for the construction of objects that are made up of other objects.
+

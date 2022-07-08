@@ -10,7 +10,8 @@ const promptHandler = new PromptHandler(api_key, [
     'classifyPrompt.txt',
     'plainEnglishPrompt.txt',
     'codeExamplePrompt.txt',
-    'bothPrompt.txt'
+    'bothPrompt.txt',
+    'elaboratePrompt.txt',
 ].map(prompt => path.join(__dirname, 'prompts/' + prompt)));
 
 const bot = new Bot(token, promptHandler);

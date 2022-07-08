@@ -6,10 +6,15 @@ type dictionary = { [key: string]: string };
 export class PromptHandler {
     openai: OpenAI;
     prompts: dictionary
+    history: string[]
+    maxHistory: number
 
-    constructor(api_key: string, paths: string[]) {
+
+    constructor(api_key: string, paths: string[], maxHistory: number = 10) {
         this.openai = new OpenAI(api_key);
         this.prompts = this.readPrompts(paths)
+        this.history = []
+        this.maxHistory = maxHistory
     }
 
     readPrompts(paths: string[]): dictionary {
@@ -24,7 +29,7 @@ export class PromptHandler {
         return dictionary;
     }
     preparePrompt(template: string, message: string): string {
-        return this.prompts[template] + `Q: ${message}\nA:`;
+        return this.prompts[template] + `${message}\nA:`;
     }
     async sendPrompt(prompt: string, engine: string, maxTokens: number): Promise<string> {
         const gptResponse = await this.openai.complete({
@@ -42,21 +47,66 @@ export class PromptHandler {
         });
         return gptResponse.data.choices[0].text.substring(1);
     }
+    addToHistory(message: string, response: string): void {
+        this.history.push(`${message}\nA: ${response.trim()}`);
+        if (this.history.length > this.maxHistory) {
+            this.history.shift();
+        }
+    }
     async queryGPT3(prompt: string, message: string, engine: string, maxTokens: number): Promise<string> {
         const preparedPrompt = this.preparePrompt(prompt, message);
         const response = await this.sendPrompt(preparedPrompt, engine, maxTokens);
         return response;
     }
     async generateReply(message: string): Promise<string> {
-        const classification = await this.queryGPT3('classifyPrompt', message, 'text-davinci-002', 3000);
+        const messageFormatted = `Q: ${message}`;
+        const classification = await this.queryGPT3(
+            'classifyPrompt',
+            messageFormatted,
+            'text-davinci-002',
+            3000);
         console.log('classification:', classification);
         switch (classification) {
             case 'Code Example':
-                return this.queryGPT3('codeExamplePrompt', message, 'code-davinci-002', 3000);
+                return this.queryGPT3(
+                    'codeExamplePrompt',
+                    messageFormatted,
+                    'code-davinci-002',
+                    3000
+                    ).then(response => {
+                        this.addToHistory(messageFormatted, response)
+                        return response;
+                    });
             case 'Plain English':
-                return this.queryGPT3('plainEnglishPrompt', message, 'text-davinci-002', 3000);
+                return this.queryGPT3(
+                    'plainEnglishPrompt',
+                    messageFormatted,
+                    'text-davinci-002',
+                    3000
+                    ).then(response => {
+                        this.addToHistory(messageFormatted, response)
+                        return response;
+                    });
             case 'Both':
-                return this.queryGPT3('bothPrompt', message, 'code-davinci-002', 5000);
+                return this.queryGPT3(
+                    'bothPrompt',
+                    messageFormatted,
+                    'code-davinci-002',
+                    3000
+                ).then(response => {
+                    this.addToHistory(messageFormatted, response);
+                    return response;
+                });
+            case 'Elaborate':
+                return this.queryGPT3(
+                    'elaboratePrompt',
+                    this.history.join('\n\n') + '\n\n' + messageFormatted,
+                    'code-davinci-002',
+                    3000
+                ).then(response => {
+                    this.addToHistory(messageFormatted, response);
+                    return response;
+                });
             default:
                 return 'Error classifying message.';
         }

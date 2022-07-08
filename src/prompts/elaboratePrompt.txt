@@ -1,0 +1,101 @@
+====
+Expand on previously given answers.
+====
+
+Q: What is the builder pattern?
+A: The builder pattern is a creational design pattern that allows for the construction of complex objects using a step-by-step approach. This pattern is often used in conjunction with the factory pattern.
+
+Q: Elaborate
+A: The builder pattern is a useful tool when you need to create complex objects with many different parts. This pattern allows you to create these objects step-by-step, in a much more manageable way. 
+
+Often, the builder pattern is used in conjunction with the factory pattern. The factory pattern is responsible for creating the basic object, while the builder pattern handles the construction of the object's individual parts. This separation of concerns can make it easier to modify and extend your code.
+
+Q: How could I represent a chess board?
+A: One way would be to use a two-dimensional 8x8 array, with the first dimension representing the rank (row) and the second dimension representing the file (column). The elements in the array can be either 0 or 1, with 0 representing an empty square and 1 representing a square that is occupied by a piece.
+```py
+chess_board = [
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1]
+]
+```
+
+Q: What's another way?
+A: Another way would be to use a dictionary, with the keys representing the rank and file of each square, and the values representing whether or not the square is occupied.
+```py
+chess_board = {
+    'a1': 1, 'b1': 1, 'c1': 1, 'd1': 1, 'e1': 1, 'f1': 1, 'g1': 1, 'h1': 1,
+    'a2': 1, 'b2': 1, 'c2': 1, 'd2': 1, 'e2': 1, 'f2': 1, 'g2': 1, 'h2': 1,
+    'a3': 0, 'b3': 0, 'c3': 0, 'd3': 0, 'e3': 0, 'f3': 0, 'g3': 0, 'h3': 0,
+    'a4': 0, 'b4': 0, 'c4': 0, 'd4': 0, 'e4': 0, 'f4': 0, 'g4': 0, 'h4': 0,
+    'a5': 0, 'b5': 0, 'c5': 0, 'd5': 0, 'e5': 0, 'f5': 0, 'g5': 0, 'h5': 0,
+    'a6': 0, 'b6': 0, 'c6': 0, 'd6': 0, 'e6': 0, 'f6': 0, 'g6': 0, 'h6': 0,
+    'a7': 1, 'b7': 1, 'c7': 1, 'd7': 1, 'e7': 1, 'f7': 1, 'g7': 1, 'h7': 1,
+    'a8': 1, 'b8': 1, 'c8': 1, 'd8': 1, 'e8': 1, 'f8': 1, 'g8': 1, 'h8': 1
+}
+```
+
+Q: What is the difference between a class and an object?
+A: A class is a blueprint for an object. An object is an instance of a class.
+
+Q: I'm still confused, could you give an analogy?
+A: Sure. A class is like a cookie cutter. It's a tool that you can use to create many different cookies. An object is like a cookie. It's an instance of a cookie cutter.
+
+Q: What is the facade pattern?
+A: The facade pattern is a structural design pattern that provides a simplified interface to a complex system.
+
+Q: Can you give an example?
+A: Sure. Let's say you're building a video game. You have a class that represents the player, and a class that represents the enemies. You also have a class that represents the game's physics engine. The physics engine is responsible for handling collisions between the player and the enemies.
+
+The physics engine is a complex system, and it's not something that you want to expose to the rest of your code. Instead, you can create a facade class that provides a simplified interface to the physics engine. This facade class can then be used by the rest of your code.
+
+Q: Can you give a code example?
+A: Sure. Here's a simplified version of the physics engine class:
+```py
+class PhysicsEngine:
+    def __init__(self):
+        self.player = None
+        self.enemies = []
+
+    def add_player(self, player):
+        self.player = player
+
+    def add_enemy(self, enemy):
+        self.enemies.append(enemy)
+
+    def check_collisions(self):
+        for enemy in self.enemies:
+            if self.player.x == enemy.x and self.player.y == enemy.y:
+                print('Collision!')
+```
+
+And here's a simplified version of the facade class:
+```py
+class PhysicsEngineFacade:
+    def __init__(self):
+        self.physics_engine = PhysicsEngine()
+
+    def add_player(self, player):
+        self.physics_engine.add_player(player)
+
+    def add_enemy(self, enemy):
+        self.physics_engine.add_enemy(enemy)
+
+    def check_collisions(self):
+        self.physics_engine.check_collisions()
+```
+
+Q: what is logos
+A: Logos is a Greek word that can be translated to mean "reason" or "logic." It is often used in philosophy to refer to the use of reason to arrive at truth.
+
+Q: tell me about its history
+A: The term logos was first used by the Greek philosopher Heraclitus. He used the term to refer to the principle of order and knowledge in the universe. The Stoics later used the term to refer to the divine reason that governs the universe, "logos spermatikos" or "the divine word.". The Christian philosopher Philo of Alexandria used the term to refer to the divine reason that is present in the universe.
+
+Q: what about in the context of christianity?
+A: In the context of Christianity, the term logos is used to refer to the divine word of God. It is often used to refer to Jesus Christ, who is the incarnation of the divine word - "the word became flesh."
+

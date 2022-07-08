@@ -1,8 +1,9 @@
 ====
-Classify questions into one of two categories:
+Classify questions into one of four categories:
 1. Code Example
 2. Plain English
 3. Both
+4. Elaborate
 ====
 
 Q: for loop in python
@@ -46,3 +47,43 @@ A: Plain English
 
 Q: What is a function w/ ex
 A: Both
+
+Q: elaborate
+A: Elaborate
+
+Q: elaborate w/ ex
+A: Elaborate
+
+Q: What do you mean?
+A: Elaborate
+
+Q: I'm still confused.
+A: Elaborate
+
+Q: Could you give an analogy?
+A: Elaborate
+
+Q: Why?
+A: Elaborate
+
+Q: example?
+A: Elaborate
+
+Q: what is logos?
+A: Plain English
+
+Q: tell me about its history
+A: Elaborate
+
+Q: how did he/she/it die?
+A: Elaborate
+
+Q: what did she invent?
+A: Elaborate
+
+Q: What effect will this have
+A: Elaborate
+
+Q: tell me about quantum ai
+A: Plain English
+
