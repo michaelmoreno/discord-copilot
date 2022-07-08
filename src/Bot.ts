@@ -1,18 +1,21 @@
 import {Client, Intents } from 'discord.js'
+import { CommandHandler } from './CommandHandler'
 import { PromptHandler } from './PromptHandler'
 
 export class Bot {
     token: string
     client: Client
     promptHandler: PromptHandler
+    commandHandler: CommandHandler
 
-    constructor(token: string, promptHandler: PromptHandler) {
+    constructor(token: string, promptHandler: PromptHandler, commandHandler: CommandHandler) {
         this.token = token
         this.client = new Client({
             intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]
         })
         
         this.promptHandler = promptHandler
+        this.commandHandler = commandHandler
     }
     
     activate() {
@@ -26,21 +29,8 @@ export class Bot {
         if (!message.mentions.has(this.client.user))
             return
 
-        let msg = message.content.replace(`<@${this.client.user!.id}>`, '').trim()
-
-        switch (msg) {
-            case 'history':
-                let history = this.promptHandler.history
-                message.reply(`\`History - (${history.length}):\`\n\n${history.join('\n\n')}`)
-                return
-            case 'clear'||'clear history'||'history clear':
-                this.promptHandler.history = []
-                message.reply('`History cleared`')
-                return
-        }
-        
         message.channel.sendTyping();
-        const response = await this.promptHandler.generateReply(msg)
+        const response = this.commandHandler.handle(message.content) || await this.promptHandler.generateReply(message.content)
         message.reply(response)
     }
 }

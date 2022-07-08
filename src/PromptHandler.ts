@@ -58,8 +58,14 @@ export class PromptHandler {
         const response = await this.sendPrompt(preparedPrompt, engine, maxTokens);
         return response;
     }
+    sanitize(message: string): string {
+        return message.replace(/<@[^>]+>/g, '').trim()
+    }
+    format(message: string): string {
+        return `Q: ${this.sanitize(message)}`;
+    }
     async generateReply(message: string): Promise<string> {
-        const messageFormatted = `Q: ${message}`;
+        const messageFormatted = this.format(message);
         const classification = await this.queryGPT3(
             'classifyPrompt',
             messageFormatted,
