@@ -26,8 +26,21 @@ export class Bot {
         if (!message.mentions.has(this.client.user))
             return
 
+        let msg = message.content.replace(`<@${this.client.user!.id}>`, '').trim()
+
+        switch (msg) {
+            case 'history':
+                let history = this.promptHandler.history
+                message.reply(`\`History - (${history.length}):\`\n\n${history.join('\n\n')}`)
+                return
+            case 'clear'||'clear history'||'history clear':
+                this.promptHandler.history = []
+                message.reply('`History cleared`')
+                return
+        }
+        
         message.channel.sendTyping();
-        const response = await this.promptHandler.generateReply(message.content)
+        const response = await this.promptHandler.generateReply(msg)
         message.reply(response)
     }
 }
