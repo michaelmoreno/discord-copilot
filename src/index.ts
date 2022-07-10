@@ -2,7 +2,7 @@ import 'dotenv/config';
 import path from 'path';
 import { PromptHandler } from './PromptHandler';
 import { CommandHandler } from './CommandHandler';
-import { ClearCommandFactory, HistoryCommandFactory } from './CommandHandling';
+import { ClearCommandFactory, HistoryCommandFactory, HelpCommandFactory } from './CommandHandling';
 import { Bot } from './Bot';
 
 const token = process.env.TOKEN as string;
@@ -19,6 +19,7 @@ const promptHandler = new PromptHandler(api_key, [
 const commandHandler = new CommandHandler([
     new HistoryCommandFactory(['history'], promptHandler),
     new ClearCommandFactory(['clear'], promptHandler),
+    new HelpCommandFactory(['help', 'commands', 'h', '?']),
 ])
 
 const bot = new Bot(token, promptHandler, commandHandler);
