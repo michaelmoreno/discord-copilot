@@ -1,14 +1,14 @@
 import {Client, Intents } from 'discord.js'
-import { CommandHandler } from './CommandHandler'
+import { ICommandHandler } from './CommandHandling'
 import { PromptHandler } from './PromptHandler'
 
 export class Bot {
     token: string
     client: Client
     promptHandler: PromptHandler
-    commandHandler: CommandHandler
+    commandHandler: ICommandHandler
 
-    constructor(token: string, promptHandler: PromptHandler, commandHandler: CommandHandler) {
+    constructor(token: string, promptHandler: PromptHandler, commandHandler: ICommandHandler) {
         this.token = token
         this.client = new Client({
             intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]

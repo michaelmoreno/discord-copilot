@@ -1,22 +1,26 @@
-import { ICommand } from "./CommandHandler/ICommand";
-import { ICommandHandler } from "./CommandHandler/ICommandHandler";
+import { ICommandFactory } from "./CommandHandling";
+import { ICommandHandler } from "./CommandHandling";
 
 export class CommandHandler implements ICommandHandler {
-    commands: ICommand[];
+    protected factories: ICommandFactory[]
 
-    constructor(commands: ICommand[]) {
-        this.commands = commands
+    constructor(factories: ICommandFactory[]) {
+        this.factories = factories
     }
     sanitize(message: string): string {
         return message.replace(/<@[^>]+>/g, '').trim()
     }
-    handle(message: string): string | null {
+    matchFactory(message: string): ICommandFactory | undefined {
+        return this.factories.find(factory => factory.detectCommand(message))
+    }
+    handle(message: string) {
         const sanitized = this.sanitize(message)
-        for (const command of this.commands) {
-            const reply = command.handle(sanitized)
-            if (reply)
-                return reply
+        const factory = this.matchFactory(sanitized)
+        if (!factory) {
+            console.log('No commands found for known factories in message: ' + sanitized)
+            return null
         }
-        return null
+        const command = factory.createCommand()
+        return command.handle(sanitized)
     }
 }
