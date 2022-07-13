@@ -1,26 +1,26 @@
-import { PromptHandler } from "../../PromptHandler";
+import { HistoryService } from "../../HistoryService/HistoryService";
 import { ICommand } from "../ICommand";
 import { ICommandFactory } from "../ICommandFactory";
 
 export class HistoryCommand extends ICommand {
-    promptHandler: PromptHandler
+    history: HistoryService
 
-    constructor(promptHandler: PromptHandler) {
+    constructor(history: HistoryService) {
         super()
-        this.promptHandler = promptHandler
+        this.history = history
     }
     handle(message: string) {
-        const history = this.promptHandler.history
+        const history = this.history.get()
         return '`History - ' + `(${history.length}):\`\n\n` + history.join('\n\n')
     }
 }
 
 export class HistoryCommandFactory extends ICommandFactory {
-    prommptHandler: PromptHandler
+    prommptHandler: HistoryService
 
-    constructor(keywords: string[], promptHandler: PromptHandler) {
+    constructor(keywords: string[], history: HistoryService) {
         super(keywords)
-        this.prommptHandler = promptHandler
+        this.prommptHandler = history
     }
     createCommand(): HistoryCommand {
         return new HistoryCommand(this.prommptHandler)

@@ -1,29 +1,29 @@
-import { PromptHandler } from "../../PromptHandler";
+import { HistoryService } from "../../HistoryService/HistoryService";
 import { ICommand } from "../ICommand";
 import { ICommandFactory } from "../ICommandFactory";
 
 export class ClearCommand extends ICommand {
-    promptHandler: PromptHandler
+    history: HistoryService
 
-    constructor(promptHandler: PromptHandler) {
+    constructor(history: HistoryService) {
         super()
-        this.promptHandler = promptHandler
+        this.history = history
     }
     handle(message: string) {
-        this.promptHandler.history = []
+        this.history.clear()
         return '`History cleared`'
     }
 }
 
 export class ClearCommandFactory extends ICommandFactory {
-    promptHandler: PromptHandler
+    history: HistoryService
 
-    constructor(keywords: string[], promptHandler: PromptHandler) {
+    constructor(keywords: string[], history: HistoryService) {
         super(keywords)
-        this.promptHandler = promptHandler
+        this.history = history
     }
     createCommand(): ClearCommand {
-        return new ClearCommand(this.promptHandler)
+        return new ClearCommand(this.history)
     }
     detectCommand(message: string) {
         for (const keyword of this.keywords) {
