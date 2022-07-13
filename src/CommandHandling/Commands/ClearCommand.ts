@@ -25,9 +25,20 @@ export class ClearCommandFactory extends ICommandFactory {
     createCommand(): ClearCommand {
         return new ClearCommand(this.history)
     }
+    prepare(message: string): string[] {
+        let words = message.split(' ')
+        const len = words.length
+        const cases = []
+        for (let i = 0; i < len; i++) {
+            cases.push(words.join(' '))
+            words.pop()
+        }
+        return cases
+    }
     detectCommand(message: string) {
+        const cases = this.prepare(message)
         for (const keyword of this.keywords) {
-            if (message.startsWith(keyword))
+            if (cases.includes(keyword))
                 return true
         }
         return false
